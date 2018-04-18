@@ -51,6 +51,12 @@ namespace Vidly.Controllers
             return HttpNotFound();
         }
 
+        public ActionResult New()
+        {
+            var membershipTypes = _context.MembershipTypes.ToList();
+            return View();
+        }
+
         private List<Customer> GetCustomers()
         {
             var customers = new List<Customer>
