@@ -5,6 +5,7 @@
 }
 
 <h2>Movies List</h2>
+@Html.ActionLink("Nuevo", "New", "Movies")
 
 @if (Model.Movies.Count == 0)
 {
@@ -23,7 +24,7 @@ else
             @foreach (var movie in Model.Movies)
             {
                 <tr>
-                    <td>@Html.ActionLink(@movie.Name, string.Concat("Details/", @movie.Id), "Movies")</td>
+                    <td>@Html.ActionLink(@movie.Name, "Edit", "Movies", new { id = @movie.Id }, null)</td>
                     <td>@movie.Genre.Name</td>
                 </tr>
 

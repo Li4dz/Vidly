@@ -24,50 +24,30 @@ namespace Vidly.Controllers
             _context.Dispose();
         }
 
-        public ActionResult Random()
+        public ActionResult New()
         {
-            //var movie = new Movie { Name = "Movie Test" };
-            //return View(movie);
-            //return Content("Hello World");
-            //return HttpNotFound();
-            //return new EmptyResult();
-            //return RedirectToAction("Index", "Home", new { page = 1, sortBy = "name" });
-
-            /*VIEW DATA*/
-            //ViewData["Movie"] = movie;
-            //return View();
-
-            var movie = new Movie { Name = "Movie Test" };
-            var customers = new List<Customer>
+            var model = new MoviesViewModel
             {
-                new Customer { Name = "Customer 1" },
-                new Customer { Name = "Customer 2" }
+                Movie = new Movie(),
+                Genres = _context.Genres.ToList()
             };
 
-            var viewModel = new RandomMovieViewModel
-            {
-                Movie = movie,
-                Customers = customers
-            };
-
-            return View(viewModel);
-
+            return View("Form",model);
         }
+
 
         public ActionResult Edit(int id)
         {
-            return Content("id=" + id);
+            var movie = _context.Movies.SingleOrDefault(x => x.Id == id);
+            if (movie == null)
+                return HttpNotFound();
+            var viewModel = new MoviesViewModel
+            {
+                Movie = movie,
+                Genres = _context.Genres.ToList()
+            };
+            return View("Form", viewModel);
         }
-
-        //public ActionResult Index(int? pageIndex, string sortBy)
-        //{
-        //    if (!pageIndex.HasValue)
-        //        pageIndex = 1;
-        //    if (string.IsNullOrEmpty(sortBy))
-        //        sortBy = "Name";
-
-        //    return Content(string.Format("pageIndex={0}&sortBy={1}", pageIndex, sortBy));
-        //}
 
         public ActionResult Details(int id)
         {
@@ -82,6 +62,24 @@ namespace Vidly.Controllers
             }
 
             return HttpNotFound();
+        }
+
+        [HttpPost]
+        public ActionResult Save(MoviesViewModel model)
+        {
+            if (model.Movie.Id == 0)
+                _context.Movies.Add(model.Movie);
+            else
+            {
+                var movieInDb = _context.Movies.Single(x => x.Id == model.Movie.Id);
+                movieInDb.Name = model.Movie.Name;
+                movieInDb.ReleaseDate = model.Movie.ReleaseDate;
+                movieInDb.DateAdded = model.Movie.DateAdded;
+                movieInDb.GenreId = model.Movie.GenreId;
+            }
+
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Movies");
         }
 
         public ActionResult Index()
