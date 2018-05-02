@@ -24,12 +24,15 @@ namespace Vidly.Controllers
             _context.Dispose();
         }
 
-
         public ActionResult Index()
         {
-            return View();
+            if (User.IsInRole(RoleName.CanManageMovie))
+                return View("List");
+      
+            return View("ReadOnlyList");
         }
 
+        [Authorize(Roles = RoleName.CanManageMovie)]
         public ActionResult New()
         {
             var model = new MoviesViewModel
