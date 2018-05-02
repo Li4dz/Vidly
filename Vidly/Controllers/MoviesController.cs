@@ -24,6 +24,12 @@ namespace Vidly.Controllers
             _context.Dispose();
         }
 
+
+        public ActionResult Index()
+        {
+            return View();
+        }
+
         public ActionResult New()
         {
             var model = new MoviesViewModel
@@ -94,15 +100,6 @@ namespace Vidly.Controllers
             return RedirectToAction("Index", "Movies");
         }
 
-        public ActionResult Index()
-        {
-            var movies = _context.Movies.Include(g => g.Genre).ToList();
-            var viewModel = new MoviesViewModel
-            {
-                Movies = movies
-            };
-            return View(viewModel);
-        }
 
         [Route("movies/released/{year}/{month:regex(\\d{2}):range(1,12)}")]
         public ActionResult ByReleaseDate(int year, int month)
